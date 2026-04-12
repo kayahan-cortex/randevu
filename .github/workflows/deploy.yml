@@ -12,27 +12,17 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
-          host: 3.65.20.111
-          username: kayahan
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          fingerprint: "" # Host key kontrolünü atlamak için
+          script_stop: true
           script: |
-            cd /home/kayahan/randevu
-
-            # Pull latest changes
+            cd /var/www/html/randevu
             git pull origin main
-
-            # Install dependencies
-            npm ci
-
-            # Generate Prisma client
+            npm install
             npx prisma generate
-
-            # Run database migrations
-            npx prisma migrate deploy
-
-            # Build the application
+            npx prisma db push --accept-data-loss
             npm run build
-
-            # Restart with PM2
-            pm2 restart randevu --update-env || pm2 start npm --name "randevu" -- start
-            pm2 save
+            pm2 restart randevu
