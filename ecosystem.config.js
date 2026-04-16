@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "randevu",
+      name: "rezervasyon",
       script: "npm",
       args: "start",
       cwd: "/var/www/html/rezervasyon",
